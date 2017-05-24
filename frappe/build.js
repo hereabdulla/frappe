@@ -24,21 +24,21 @@ const build_map = make_build_map();
 // command line args
 const action = process.argv[2] || '--build';
 
-if (!['--build', '--watch'].includes(action)) {
+if (['--build', '--watch'].indexOf(action) === -1) {
 	console.log('Invalid argument: ', action);
 	return;
 }
 
 if (action === '--build') {
 	const minify = process.argv[3] === '--minify' ? true : false;
-	build({ minify });
+	build(minify);
 }
 
 if (action === '--watch') {
 	watch();
 }
 
-function build({ minify=false } = {}) {
+function build(minify) {
 	for (const output_path in build_map) {
 		pack(output_path, build_map[output_path], minify);
 	}
@@ -103,6 +103,8 @@ function pack(output_path, inputs, minify) {
 			output_txt += `\n/*\n *\t${file}\n */\n`
 		}
 		output_txt += file_content;
+
+		output_txt = output_txt.replace(/['"]use strict['"];/, '');
 	}
 
 	const target = p(assets_path, output_path);
@@ -119,9 +121,9 @@ function pack(output_path, inputs, minify) {
 
 function babelify(content, path, minify) {
 	let presets = ['es2015', 'es2016'];
-	if(minify) {
-		presets.push('babili'); // new babel minifier
-	}
+	// if(minify) {
+	// 	presets.push('babili'); // new babel minifier
+	// }
 	try {
 		return babel.transform(content, {
 			presets: presets,
