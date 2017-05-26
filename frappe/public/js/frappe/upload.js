@@ -267,7 +267,6 @@ frappe.upload = {
 
   read_file: function(fileobj, args, opts) {
     var freader = new FileReader();
-
     freader.onload = function() {
       args.filename = fileobj.name;
       if (opts.options && opts.options.toLowerCase() == "image") {
